@@ -1,0 +1,10 @@
+[
+  {
+    "transactionId": 9203980,
+    "timestamp": "2021-06-24T05:30:00.000Z",
+    "action": "debit",
+    "description": "Installment",
+    "amount": "2000",
+    "currency": "SGD"
+  }
+]

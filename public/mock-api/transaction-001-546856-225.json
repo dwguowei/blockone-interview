@@ -1,0 +1,26 @@
+[
+  {
+    "transactionId": 989320,
+    "timestamp": "2021-06-25T18:25:43.511Z",
+    "action": "credit",
+    "description": "Salary",
+    "amount": "10000",
+    "currency": "SGD"
+  },
+  {
+    "transactionId": 987239,
+    "timestamp": "2021-06-20T08:14:02.125Z",
+    "action": "debit",
+    "description": "ABC pte ltd",
+    "amount": "10.56",
+    "currency": "SGD"
+  },
+  {
+    "transactionId": 892379,
+    "timestamp": "2021-06-01T15:55:46.001Z",
+    "action": "debit",
+    "description": "Rental",
+    "amount": "3000",
+    "currency": "SGD"
+  }
+]
