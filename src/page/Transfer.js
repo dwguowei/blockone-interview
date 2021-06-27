@@ -12,8 +12,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Alert from '@material-ui/lab/Alert';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import useAxiosFetch from "../util/AxiosFetch";
 import useForm from "../util/FormValidation";
 import { Grid } from "@material-ui/core";
@@ -92,21 +95,22 @@ const Transfer = () => {
     },
     onSubmit: () => alert('Transfer success!'),
     initialValues: { // used to initialize the data
-      fromAccountNo: '',
-      toAccountNo: '',
-      transferAmount: 0,
-      transferCurrency: '',
+      fromAccountNo: undefined,
+      toAccountNo: undefined,
+      transferAmount: '',
+      transferCurrency: undefined,
     },
   });
 
   const {data:accounts, isLoading, hasError, errorMessage} = useAxiosFetch(`/mock-api/account.json`);
 
-  const transferCurrency = [];
+  const uniqCurrency = [];
   accounts?.map(acc => {
-    if (transferCurrency.indexOf(acc.currency) === -1) {
-      transferCurrency.push(acc.currency)
+    if (uniqCurrency.indexOf(acc.currency) === -1) {
+      uniqCurrency.push(acc.currency)
     }
   });
+  const transferCurrency = uniqCurrency.map((curr)=>({currency: curr}))
   return (
     <div>
       <Typography variant="h2" component="h1" gutterBottom>Transfer</Typography>
@@ -122,7 +126,7 @@ const Transfer = () => {
             <Grid item xs={12}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={4}>
-                  <FormControl className={classes.formControl} fullWidth {...!!formErrors.fromAccountNo ? {error: true} : {}}>
+                  {/* <FormControl className={classes.formControl} fullWidth {...!!formErrors.fromAccountNo ? {error: true} : {}}>
                     <InputLabel shrink htmlFor="fromAccountNo">From Account</InputLabel>
                     <NativeSelect
                       value={data.fromAccountNo}
@@ -140,10 +144,35 @@ const Transfer = () => {
                       })}
                     </NativeSelect>
                     <FormHelperText>{formErrors.fromAccountNo}</FormHelperText>
-                  </FormControl>
+                  </FormControl> */}
+                  <Autocomplete
+                      id="fromAccountNo"
+                      options={accounts || []}
+                      getOptionLabel={(option)=>option.accountNo || ""}
+                      value={data.fromAccountNo || {}}
+                      disableClearable
+                      loading={isLoading}
+                      onChange={(event, newValue)=>handleChange('fromAccountNo')({...event,target:{...event.target,value:newValue}})}
+                      renderInput={(params) => (
+                        <TextField 
+                          {...params} 
+                          label="From Account" 
+                          margin="dense" 
+                          InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                              <React.Fragment>
+                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                              </React.Fragment>
+                            ),
+                          }}
+                          error={!!formErrors.fromAccountNo} 
+                          helperText={formErrors.fromAccountNo}/>
+                      )} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  <FormControl className={classes.formControl} fullWidth {...!!formErrors.toAccountNo ? {error: true} : {}} >
+                  {/* <FormControl className={classes.formControl} fullWidth {...!!formErrors.toAccountNo ? {error: true} : {}} >
                     <InputLabel shrink htmlFor="toAccountNo">To Account</InputLabel>
                     <NativeSelect
                       value={data.toAccountNo}
@@ -161,14 +190,39 @@ const Transfer = () => {
                       })}
                     </NativeSelect>
                     <FormHelperText>{formErrors.toAccountNo}</FormHelperText>
-                  </FormControl>
+                  </FormControl> */}
+                  <Autocomplete
+                      id="toAccountNo"
+                      options={accounts || []}
+                      getOptionLabel={(option)=>option.accountNo || ""}
+                      value={data.toAccountNo || {}}
+                      disableClearable
+                      loading={isLoading}
+                      onChange={(event, newValue)=>handleChange('toAccountNo')({...event,target:{...event.target,value:newValue}})}
+                      renderInput={(params) => (
+                        <TextField 
+                          {...params} 
+                          label="To Account" 
+                          margin="dense" 
+                          InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                              <React.Fragment>
+                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                              </React.Fragment>
+                            ),
+                          }}
+                          error={!!formErrors.toAccountNo} 
+                          helperText={formErrors.toAccountNo}/>
+                      )} />
                 </Grid>
               </Grid>
             </Grid>
             <Grid item xs={12}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={9} md={6}>
-                  <FormControl className={classes.formControl} fullWidth {...!!formErrors.transferAmount ? {error: true} : {}}>
+                  {/* <FormControl className={classes.formControl} fullWidth {...!!formErrors.transferAmount ? {error: true} : {}}>
                     <InputLabel shrink htmlFor="transferAmount">Account To Transfer</InputLabel>
                     <Input
                       value={data.transferAmount}
@@ -181,12 +235,21 @@ const Transfer = () => {
                       }}
                     />
                     <FormHelperText id="transferAmount">{formErrors.transferAmount}</FormHelperText>
-                  </FormControl>
+                  </FormControl> */}
+                  <TextField 
+                    value={data.transferAmount}
+                    onFocus={(e)=>{if (e.target.value==="0"){handleChange('transferAmount')({...e, target: {...e.target, value: ""}})}}}
+                    onChange={handleChange('transferAmount', (value)=>RegExp("^[0-9\.]*$").test(value) ? value : data.transferAmount)}
+                    label="Transfer Amount" 
+                    margin="dense" 
+                    fullWidth
+                    error={!!formErrors.transferAmount} 
+                    helperText={formErrors.transferAmount}/>
                 </Grid>
                 <Grid item xs={12} sm={3} md={2}>
-                  <FormControl className={`${classes.formControl} ${classes.formControlCurrency}`} fullWidth {...!!formErrors.transferCurrency ? {error: true} : {}} >
-                    <InputLabel shrink htmlFor="transferCurrency">Currency</InputLabel>
-                    <NativeSelect
+                  {/* <FormControl className={`${classes.formControl} ${classes.formControlCurrency}`} fullWidth {...!!formErrors.transferCurrency ? {error: true} : {}} > */}
+                    {/* <InputLabel shrink htmlFor="transferCurrency">Currency</InputLabel> */}
+                    {/* <NativeSelect
                       value={data.transferCurrency}
                       onChange={handleChange('transferCurrency')}
                       inputProps={{
@@ -200,9 +263,35 @@ const Transfer = () => {
                           <option key={currency} value={currency}>{currency}</option>
                         )
                       })}
-                    </NativeSelect>
-                    <FormHelperText>{formErrors.transferCurrency}</FormHelperText>
-                  </FormControl>
+                    </NativeSelect> */}
+                    <Autocomplete
+                      id="transferCurrency"
+                      options={transferCurrency}
+                      getOptionLabel={(option)=>option.currency || ""}
+                      value={data.transferCurrency || {}}
+                      disableClearable
+                      loading={isLoading}
+                      onChange={(event, newValue)=>handleChange('transferCurrency')({...event,target:{...event.target,value:newValue}})}
+                      renderInput={(params) => (
+                        <TextField 
+                          {...params} 
+                          label="Currency" 
+                          margin="dense" 
+                          
+                          InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                              <React.Fragment>
+                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                              </React.Fragment>
+                            ),
+                          }}
+                          error={!!formErrors.transferCurrency} 
+                          helperText={formErrors.transferCurrency}/>
+                      )} />
+                    {/* <FormHelperText>{formErrors.transferCurrency}</FormHelperText>
+                  </FormControl> */}
                 </Grid>
               </Grid>
             </Grid>

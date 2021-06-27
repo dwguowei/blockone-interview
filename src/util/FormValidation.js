@@ -27,7 +27,6 @@ const useForm = (options) => {
       for (const key in validations) {
         const value = data[key];
         const validation = validations[key];
-        console.log(validation?.required?.value,!value, value)
         if (validation?.required?.value && !value) {
           isValid = false;
           newErrors[key] = newErrors[key] || validation?.required?.message;
