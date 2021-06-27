@@ -2,30 +2,57 @@ import React from "react";
 import {
   Link
 } from "react-router-dom";
+import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import Input from '@material-ui/core/Input';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import Alert from '@material-ui/lab/Alert';
 import useAxiosFetch from "../util/AxiosFetch";
 import useForm from "../util/FormValidation";
+import { Grid } from "@material-ui/core";
+
+const useStyles = makeStyles(theme => ({
+  submit: {
+    color: "white",
+    backgroundColor: theme.palette.success.main, 
+    '&:hover': {
+      color: "white",
+      backgroundColor: theme.palette.success.dark, 
+    }
+  },
+  container: {
+    padding: theme.spacing(3),
+  },
+  formControl: {
+    // margin: theme.spacing(1),
+    minWidth: '24ch',
+    // minWidth: 120,
+  },
+  formControlCurrency: {
+    minWidth: '16ch',
+  }
+  // selectEmpty: {
+  //   marginTop: theme.spacing(2),
+  // },
+}));
 
 const Transfer = () => {
+  const classes = useStyles();
 
   const {
     handleSubmit, // handles form submission
     handleChange, // handles input changes
     data, // access to the form data
-    errors: formErrors, // includes the errors to show
-  } = useForm({ // the hook we are going to create
+    errors: formErrors, // form errors to show
+  } = useForm({ // hook to validate form
     validations: {
-      // name: {
-      //   pattern: {
-      //     value: '^[A-Za-z]*$',
-      //     message: "You're not allowed to...",
-      //   },
-      // },
-      // age: {
-      //   custom: {
-      //     isValid: (value) => parseInt(value, 10) > 17,
-      //     message: 'You have to be at least 18 years old.',
-      //   },
-      // },
       fromAccountNo: {
         required: {
           value: true,
@@ -56,52 +83,138 @@ const Transfer = () => {
           message: "Please input valid amount",
         },
       },
+      transferCurrency: {
+        required: {
+          value: true,
+          message: 'This field is required',
+        },
+      },
     },
     onSubmit: () => alert('Transfer success!'),
     initialValues: { // used to initialize the data
       fromAccountNo: '',
       toAccountNo: '',
+      transferAmount: 0,
+      transferCurrency: '',
     },
   });
 
   const {data:accounts, isLoading, hasError, errorMessage} = useAxiosFetch(`/mock-api/account.json`);
 
+  const transferCurrency = [];
+  accounts?.map(acc => {
+    if (transferCurrency.indexOf(acc.currency) === -1) {
+      transferCurrency.push(acc.currency)
+    }
+  });
   return (
     <div>
-        <h1>Transfer</h1>
-        {hasError && <p>{errorMessage}</p>}
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="fromAccountNo">Transfer from account:</label>
-          <select id="fromAccountNo" value={data.fromAccountNo || ''} onChange={handleChange('fromAccountNo')}>
-            <option value="">Please select an account</option>
-            {accounts && accounts.map(account => {
-              return (
-                <option key={account.accountNo} value={account.accountNo}>{account.accountNo}</option>
-              )
-            })}
-          </select>
-          <p className="error">{formErrors.fromAccountNo}</p>
-          
-          <label htmlFor="toAccountNo">Transfer to account:</label>
-          <select id="toAccountNo" value={data.toAccountNo || ''} onChange={handleChange('toAccountNo')}>
-            <option value="">Please select an account</option>
-            {accounts && accounts.map(account => {
-              return (
-                <option key={account.accountNo} value={account.accountNo}>{account.accountNo}</option>
-              )
-            })}
-          </select>
-          <p className="error">{formErrors.toAccountNo}</p>
-
-          <label htmlFor="transferAmount">Amount to transfer:</label>
-          <input type="text" id="transferAmount" value={data.transferAmount || ''} onChange={handleChange('transferAmount')}/>
-          <p className="error">{formErrors.transferAmount}</p>
-
-          <p><button type="submit">Transfer</button></p>
+      <Typography variant="h2" component="h1" gutterBottom>Transfer</Typography>
+      {hasError && (
+        <Box mb={1}><Alert variant="filled" severity="error">{errorMessage}</Alert></Box>
+      )}
+      <Paper variant="outlined" className={classes.container}>
+        <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Typography variant="body1" component="p">Transfer funds:</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={4}>
+                  <FormControl className={classes.formControl} fullWidth {...!!formErrors.fromAccountNo ? {error: true} : {}}>
+                    <InputLabel shrink htmlFor="fromAccountNo">From Account</InputLabel>
+                    <NativeSelect
+                      value={data.fromAccountNo}
+                      onChange={handleChange('fromAccountNo')}
+                      inputProps={{
+                        name: "fromAccountNo",
+                        id: 'fromAccountNo',
+                      }}
+                    >
+                      <option value="">Please select</option>
+                      {accounts && accounts.map(account => {
+                        return (
+                          <option key={account.accountNo} value={account.accountNo}>{account.accountNo}</option>
+                        )
+                      })}
+                    </NativeSelect>
+                    <FormHelperText>{formErrors.fromAccountNo}</FormHelperText>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <FormControl className={classes.formControl} fullWidth {...!!formErrors.toAccountNo ? {error: true} : {}} >
+                    <InputLabel shrink htmlFor="toAccountNo">To Account</InputLabel>
+                    <NativeSelect
+                      value={data.toAccountNo}
+                      onChange={handleChange('toAccountNo')}
+                      inputProps={{
+                        name: "toAccountNo",
+                        id: 'toAccountNo',
+                      }}
+                    >
+                      <option value="">Please select</option>
+                      {accounts && accounts.map(account => {
+                        return (
+                          <option key={account.accountNo} value={account.accountNo}>{account.accountNo}</option>
+                        )
+                      })}
+                    </NativeSelect>
+                    <FormHelperText>{formErrors.toAccountNo}</FormHelperText>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={9} md={6}>
+                  <FormControl className={classes.formControl} fullWidth {...!!formErrors.transferAmount ? {error: true} : {}}>
+                    <InputLabel shrink htmlFor="transferAmount">Account To Transfer</InputLabel>
+                    <Input
+                      value={data.transferAmount}
+                      onFocus={(e)=>{if (e.target.value==="0"){handleChange('transferAmount')({...e, target: {...e.target, value: ""}})}}}
+                      onChange={handleChange('transferAmount', (value)=>RegExp("^[0-9\.]*$").test(value) ? value : data.transferAmount)}
+                      inputProps={{
+                        name: "transferAmount",
+                        id: 'transferAmount',
+                        'aria-label': 'Transfer Amount',
+                      }}
+                    />
+                    <FormHelperText id="transferAmount">{formErrors.transferAmount}</FormHelperText>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={3} md={2}>
+                  <FormControl className={`${classes.formControl} ${classes.formControlCurrency}`} fullWidth {...!!formErrors.transferCurrency ? {error: true} : {}} >
+                    <InputLabel shrink htmlFor="transferCurrency">Currency</InputLabel>
+                    <NativeSelect
+                      value={data.transferCurrency}
+                      onChange={handleChange('transferCurrency')}
+                      inputProps={{
+                        name: "transferCurrency",
+                        id: 'transferCurrency',
+                      }}
+                    >
+                      <option value="">Please select</option>
+                      {transferCurrency && transferCurrency.map(currency => {
+                        return (
+                          <option key={currency} value={currency}>{currency}</option>
+                        )
+                      })}
+                    </NativeSelect>
+                    <FormHelperText>{formErrors.transferCurrency}</FormHelperText>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <br/>
+          <br/>
+          <Button type="submit" variant="contained" className={classes.submit}>Submit</Button>
         </form>
-        <p>
-          <Link to="/account">Account</Link>
-        </p>
+      </Paper>
+      <p>
+        <Button component={Link} to="/account" startIcon={<ArrowBackIcon/>} variant="contained" color="secondary">Back to Account</Button>
+      </p>
     </div>
   );
 }

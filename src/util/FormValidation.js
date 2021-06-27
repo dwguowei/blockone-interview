@@ -27,21 +27,22 @@ const useForm = (options) => {
       for (const key in validations) {
         const value = data[key];
         const validation = validations[key];
+        console.log(validation?.required?.value,!value, value)
         if (validation?.required?.value && !value) {
           isValid = false;
-          newErrors[key] = validation?.required?.message;
+          newErrors[key] = newErrors[key] || validation?.required?.message;
         }
 
         const pattern = validation?.pattern;
-        if (isValid && pattern?.value && !RegExp(pattern.value).test(value)) {
+        if (pattern?.value && !RegExp(pattern.value).test(value)) {
           isValid = false;
-          newErrors[key] = pattern.message;
+          newErrors[key] = newErrors[key] || pattern.message;
         }
 
         const custom = validation?.custom;
-        if (isValid && custom?.isValid && !custom.isValid(value)) {
+        if (custom?.isValid && !custom.isValid(value)) {
           isValid = false;
-          newErrors[key] = custom.message;
+          newErrors[key] = newErrors[key] || custom.message;
         }
       }
 

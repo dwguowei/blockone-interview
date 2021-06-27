@@ -7,6 +7,8 @@ import {
 import Account from "./page/Account";
 import Transaction from "./page/Transaction";
 import Transfer from "./page/Transfer";
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Container from '@material-ui/core/Container';
 
 const routes = [
   {
@@ -37,13 +39,14 @@ function RouteWithSubRoutes(route) {
 function App() {
   return (
     <Router>
-      <div>
+      <CssBaseline />
+      <Container maxWidth="md">
         <Switch>
           {routes.map((route, i) => (
             <RouteWithSubRoutes key={i} {...route} />
           ))}
         </Switch>
-      </div>
+      </Container>
     </Router>
   );
 }
