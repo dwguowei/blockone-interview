@@ -7,11 +7,6 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -34,16 +29,11 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
   formControl: {
-    // margin: theme.spacing(1),
     minWidth: '24ch',
-    // minWidth: 120,
   },
   formControlCurrency: {
     minWidth: '16ch',
   }
-  // selectEmpty: {
-  //   marginTop: theme.spacing(2),
-  // },
 }));
 
 const Transfer = () => {
@@ -126,25 +116,6 @@ const Transfer = () => {
             <Grid item xs={12}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={4}>
-                  {/* <FormControl className={classes.formControl} fullWidth {...!!formErrors.fromAccountNo ? {error: true} : {}}>
-                    <InputLabel shrink htmlFor="fromAccountNo">From Account</InputLabel>
-                    <NativeSelect
-                      value={data.fromAccountNo}
-                      onChange={handleChange('fromAccountNo')}
-                      inputProps={{
-                        name: "fromAccountNo",
-                        id: 'fromAccountNo',
-                      }}
-                    >
-                      <option value="">Please select</option>
-                      {accounts && accounts.map(account => {
-                        return (
-                          <option key={account.accountNo} value={account.accountNo}>{account.accountNo}</option>
-                        )
-                      })}
-                    </NativeSelect>
-                    <FormHelperText>{formErrors.fromAccountNo}</FormHelperText>
-                  </FormControl> */}
                   <Autocomplete
                       id="fromAccountNo"
                       options={accounts || []}
@@ -172,25 +143,6 @@ const Transfer = () => {
                       )} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  {/* <FormControl className={classes.formControl} fullWidth {...!!formErrors.toAccountNo ? {error: true} : {}} >
-                    <InputLabel shrink htmlFor="toAccountNo">To Account</InputLabel>
-                    <NativeSelect
-                      value={data.toAccountNo}
-                      onChange={handleChange('toAccountNo')}
-                      inputProps={{
-                        name: "toAccountNo",
-                        id: 'toAccountNo',
-                      }}
-                    >
-                      <option value="">Please select</option>
-                      {accounts && accounts.map(account => {
-                        return (
-                          <option key={account.accountNo} value={account.accountNo}>{account.accountNo}</option>
-                        )
-                      })}
-                    </NativeSelect>
-                    <FormHelperText>{formErrors.toAccountNo}</FormHelperText>
-                  </FormControl> */}
                   <Autocomplete
                       id="toAccountNo"
                       options={accounts || []}
@@ -222,20 +174,6 @@ const Transfer = () => {
             <Grid item xs={12}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={9} md={6}>
-                  {/* <FormControl className={classes.formControl} fullWidth {...!!formErrors.transferAmount ? {error: true} : {}}>
-                    <InputLabel shrink htmlFor="transferAmount">Account To Transfer</InputLabel>
-                    <Input
-                      value={data.transferAmount}
-                      onFocus={(e)=>{if (e.target.value==="0"){handleChange('transferAmount')({...e, target: {...e.target, value: ""}})}}}
-                      onChange={handleChange('transferAmount', (value)=>RegExp("^[0-9\.]*$").test(value) ? value : data.transferAmount)}
-                      inputProps={{
-                        name: "transferAmount",
-                        id: 'transferAmount',
-                        'aria-label': 'Transfer Amount',
-                      }}
-                    />
-                    <FormHelperText id="transferAmount">{formErrors.transferAmount}</FormHelperText>
-                  </FormControl> */}
                   <TextField 
                     value={data.transferAmount}
                     onFocus={(e)=>{if (e.target.value==="0"){handleChange('transferAmount')({...e, target: {...e.target, value: ""}})}}}
@@ -247,51 +185,32 @@ const Transfer = () => {
                     helperText={formErrors.transferAmount}/>
                 </Grid>
                 <Grid item xs={12} sm={3} md={2}>
-                  {/* <FormControl className={`${classes.formControl} ${classes.formControlCurrency}`} fullWidth {...!!formErrors.transferCurrency ? {error: true} : {}} > */}
-                    {/* <InputLabel shrink htmlFor="transferCurrency">Currency</InputLabel> */}
-                    {/* <NativeSelect
-                      value={data.transferCurrency}
-                      onChange={handleChange('transferCurrency')}
-                      inputProps={{
-                        name: "transferCurrency",
-                        id: 'transferCurrency',
-                      }}
-                    >
-                      <option value="">Please select</option>
-                      {transferCurrency && transferCurrency.map(currency => {
-                        return (
-                          <option key={currency} value={currency}>{currency}</option>
-                        )
-                      })}
-                    </NativeSelect> */}
-                    <Autocomplete
-                      id="transferCurrency"
-                      options={transferCurrency}
-                      getOptionLabel={(option)=>option.currency || ""}
-                      value={data.transferCurrency || {}}
-                      disableClearable
-                      loading={isLoading}
-                      onChange={(event, newValue)=>handleChange('transferCurrency')({...event,target:{...event.target,value:newValue}})}
-                      renderInput={(params) => (
-                        <TextField 
-                          {...params} 
-                          label="Currency" 
-                          margin="dense" 
-                          
-                          InputProps={{
-                            ...params.InputProps,
-                            endAdornment: (
-                              <React.Fragment>
-                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-                                {params.InputProps.endAdornment}
-                              </React.Fragment>
-                            ),
-                          }}
-                          error={!!formErrors.transferCurrency} 
-                          helperText={formErrors.transferCurrency}/>
-                      )} />
-                    {/* <FormHelperText>{formErrors.transferCurrency}</FormHelperText>
-                  </FormControl> */}
+                  <Autocomplete
+                    id="transferCurrency"
+                    options={transferCurrency}
+                    getOptionLabel={(option)=>option.currency || ""}
+                    value={data.transferCurrency || {}}
+                    disableClearable
+                    loading={isLoading}
+                    onChange={(event, newValue)=>handleChange('transferCurrency')({...event,target:{...event.target,value:newValue}})}
+                    renderInput={(params) => (
+                      <TextField 
+                        {...params} 
+                        label="Currency" 
+                        margin="dense" 
+                        
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <React.Fragment>
+                              {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                              {params.InputProps.endAdornment}
+                            </React.Fragment>
+                          ),
+                        }}
+                        error={!!formErrors.transferCurrency} 
+                        helperText={formErrors.transferCurrency}/>
+                    )} />
                 </Grid>
               </Grid>
             </Grid>
